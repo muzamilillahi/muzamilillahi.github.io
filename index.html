@@ -1,258 +1,705 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Muzamil Illahi | Hydroinformatics & Civil Engineer</title>
+  <title>Manchar Lake Surface Water Monitoring System</title>
+  
+  <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Plotly.js, PapaParse & Leaflet.js -->
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <style>
-    body { font-family: 'Inter', sans-serif; }
+    body { font-family: 'Inter', sans-serif; background-color: #f4f6f8; color: #0f172a; }
   </style>
 </head>
 <body class="bg-[#f4f6f8] text-[#0f172a] leading-relaxed">
 
-  <!-- Sticky Navigation Header -->
-  <header class="sticky top-0 z-50 bg-[#002244] text-white shadow-lg border-b-2 border-[#0072ce]">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="#home" class="flex flex-col">
-        <span class="font-extrabold text-lg tracking-tight">Engr. Muzamil Illahi</span>
-        <span class="text-xs text-blue-300 font-medium">USPCAS-W · MUET Jamshoro</span>
-      </a>
-      <nav class="hidden md:flex space-x-6 text-xs uppercase tracking-wider font-bold">
-        <a href="#about" class="hover:text-blue-400 transition">About</a>
-        <a href="#research" class="hover:text-blue-400 transition">Research & App</a>
-        <a href="#skills" class="hover:text-blue-400 transition">Skills</a>
-        <a href="#team" class="hover:text-blue-400 transition">Team</a>
-        <a href="#links" class="hover:text-blue-400 transition">Links</a>
-      </nav>
+  <!-- Hero Header Banner -->
+  <header class="bg-gradient-to-r from-[#002244] via-[#003366] to-[#004080] text-white p-6 shadow-md border-b-4 border-[#0072ce]">
+    <div class="max-w-7xl mx-auto">
+      <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight uppercase">
+        MANCHAR LAKE SURFACE WATER MONITORING SYSTEM
+      </h1>
+      <p class="text-xs md:text-sm font-semibold text-blue-200 mt-1 uppercase tracking-wide">
+        TO MONITOR MANCHAR LAKE FROM 2018 - 2026 AUGUST (MONTHLY)
+      </p>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section id="home" class="bg-gradient-to-br from-[#002244] via-[#003366] to-[#004080] text-white py-16 md:py-20 px-4 shadow-md">
-    <div class="max-w-6xl mx-auto">
-      <p class="text-blue-300 font-bold tracking-wide uppercase text-xs md:text-sm mb-2">
-        U.S.-Pakistan Center for Advanced Studies in Water (USPCAS-W)
-      </p>
-      <h1 class="text-3xl md:text-5xl font-black mb-4 tracking-tight">Engr. Muzamil Illahi</h1>
-      <p class="text-sm md:text-lg text-slate-200 max-w-3xl mb-6 font-normal leading-relaxed">
-        Civil Engineer & Master's Scholar in Integrated Water Resources Management (IWRM). Specializing in hydroinformatics, Google Earth Engine automation, satellite surface water monitoring, and interactive geospatial web applications.
-      </p>
-      <div class="flex flex-wrap gap-2 mb-8 text-xs font-semibold">
-        <span class="bg-white/10 border border-blue-300/30 px-3 py-1 rounded-md text-blue-100">Hydroinformatics</span>
-        <span class="bg-white/10 border border-blue-300/30 px-3 py-1 rounded-md text-blue-100">Google Earth Engine</span>
-        <span class="bg-white/10 border border-blue-300/30 px-3 py-1 rounded-md text-blue-100">GIS & Remote Sensing</span>
-        <span class="bg-white/10 border border-blue-300/30 px-3 py-1 rounded-md text-blue-100">PEC Registered (CIVIL/76510)</span>
-      </div>
-      <div class="flex flex-wrap gap-3">
-        <a href="#research" class="bg-[#0072ce] hover:bg-blue-600 text-white font-bold px-5 py-2.5 rounded-md shadow transition text-xs md:text-sm uppercase tracking-wide">
-          Explore Interactive Project
-        </a>
-        <a href="#links" class="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold px-5 py-2.5 rounded-md transition text-xs md:text-sm uppercase tracking-wide">
-          Contact & Profiles
-        </a>
-      </div>
+  <!-- Navigation Menu Bar -->
+  <nav class="bg-white border-b border-slate-300 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 flex flex-wrap gap-2 py-2">
+      <button onclick="switchNav('intro')" id="btn-intro" class="nav-btn bg-[#002244] text-white font-extrabold text-xs px-4 py-2 rounded-md shadow uppercase tracking-wider">
+        INTRODUCTION
+      </button>
+      <button onclick="switchNav('analysis')" id="btn-analysis" class="nav-btn bg-slate-100 hover:bg-slate-200 text-[#002244] font-extrabold text-xs px-4 py-2 rounded-md border border-slate-300 uppercase tracking-wider">
+        SURFACE WATER MONITORING (ANALYSIS)
+      </button>
+      <button onclick="switchNav('team')" id="btn-team" class="nav-btn bg-slate-100 hover:bg-slate-200 text-[#002244] font-extrabold text-xs px-4 py-2 rounded-md border border-slate-300 uppercase tracking-wider">
+        TEAM
+      </button>
+      <button onclick="switchNav('feedback')" id="btn-feedback" class="nav-btn bg-slate-100 hover:bg-slate-200 text-[#002244] font-extrabold text-xs px-4 py-2 rounded-md border border-slate-300 uppercase tracking-wider">
+        FEEDBACK
+      </button>
     </div>
-  </section>
+  </nav>
 
-  <!-- Main Body Content -->
-  <main class="max-w-6xl mx-auto px-4 py-12 space-y-14">
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
 
-    <!-- About & Education Section -->
-    <section id="about" class="scroll-mt-20">
-      <h2 class="text-xl md:text-2xl font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-6">
-        About & Education
-      </h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="md:col-span-2 bg-white p-6 rounded-lg border border-slate-300 shadow-sm leading-relaxed text-sm md:text-base text-slate-800">
-          <p class="mb-4">
-            I am a Civil Engineer and Post-Graduate Scholar pursuing an MS in Integrated Water Resources Management (IWRM) at the U.S.-Pakistan Center for Advanced Studies in Water (USPCAS-W), Mehran University of Engineering and Technology (MUET), Jamshoro.
-          </p>
-          <p>
-            My research combines hydrologic modeling, satellite earth observations (Sentinel-2, Sentinel-1, CHIRPS), and web application development (Python, Streamlit, Plotly) to analyze surface water dynamics, flood extremes, and drought impacts across critical water bodies in Sindh, Pakistan.
-          </p>
+    <!-- MODULE 1: INTRODUCTION -->
+    <section id="mod-intro" class="mod-section space-y-8">
+      <div>
+        <h2 class="text-lg font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-3">
+          1. MANCHAR LAKE
+        </h2>
+        <div class="bg-white border-l-4 border-[#0072ce] border border-slate-300 rounded-lg p-5 shadow-sm text-sm leading-relaxed">
+          Manchar Lake is South Asia's largest natural freshwater lake, located in Dadu and Jamshoro districts, Sindh, Pakistan. It lies west of the Indus River along the Kirthar Mountains, spanning 150–200 km² in dry periods and expanding over 500–800 km² during monsoon flood peaks.
         </div>
-        <div class="bg-white p-6 rounded-lg border border-slate-300 shadow-sm space-y-4">
-          <h3 class="font-bold text-[#002244] border-b border-slate-200 pb-2 text-xs uppercase tracking-wider">
-            Academic Credentials
-          </h3>
-          <ul class="space-y-3 text-xs md:text-sm">
-            <li>
-              <div class="font-bold text-[#002244]">MS in Integrated Water Resources Management</div>
-              <div class="text-slate-600">USPCAS-W, MUET Jamshoro (Jan 2026 – Present)</div>
-            </li>
-            <li>
-              <div class="font-bold text-[#002244]">BS in Civil Engineering</div>
-              <div class="text-slate-600">MUET Jamshoro (Graduated Dec 2024)</div>
-            </li>
-            <li>
-              <div class="font-bold text-[#002244]">Professional Engineer Registration</div>
-              <div class="text-slate-600">Pakistan Engineering Council (PEC CIVIL/76510)</div>
-            </li>
-          </ul>
+        <div class="mt-4 bg-white p-2 rounded-lg border border-slate-300 max-w-4xl mx-auto shadow-sm">
+          <img src="https://irrigation.sindh.gov.pk/files/Irrigation/Lakes/Manchar/02.jpg" class="w-full max-h-[420px] object-contain rounded" alt="Manchar Lake Overview" />
+          <p class="text-center text-xs font-bold text-slate-500 mt-2">MANCHAR LAKE BASIN OVERVIEW</p>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-3">
+          2. CATCHMENT HYDROLOGY & INFLOWS
+        </h2>
+        <div class="bg-white border-l-4 border-[#0072ce] border border-slate-300 rounded-lg p-5 shadow-sm text-sm leading-relaxed">
+          The lake receives inflow from three primary sources: flash torrent floods from the Kirthar Mountains, agricultural effluent via the Main Nara Valley Drain, and bi-directional river flow from the Indus River through the Aral and Danister canals.
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-3">
+          3. MOHANA COMMUNITY HERITAGE
+        </h2>
+        <div class="grid md:grid-cols-5 gap-4 items-center">
+          <div class="md:col-span-2 bg-white p-2 rounded-lg border border-slate-300 shadow-sm">
+            <img src="https://lastplaces.com/wp-content/uploads/2022/10/LP_pakistan_mohana_00.jpg" class="w-full h-56 object-cover rounded" alt="Mohana Community" />
+            <p class="text-center text-xs font-bold text-slate-500 mt-2">Indigenous Mohana Houseboats on Manchar Lake</p>
+          </div>
+          <div class="md:col-span-3 bg-white border-l-4 border-[#0072ce] border border-slate-300 rounded-lg p-5 shadow-sm text-sm leading-relaxed h-full flex items-center">
+            The Mohana (Mirbahar) fishing community has inhabited wooden houseboats on Manchar Lake for centuries. Ecological stress and rising water salinity have drastically reduced fish yields, threatening their traditional livelihood.
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-3">
+          4. WATER QUALITY & ECOLOGICAL IMPACT
+        </h2>
+        <div class="grid md:grid-cols-5 gap-4 items-center">
+          <div class="md:col-span-3 bg-white border-l-4 border-[#0072ce] border border-slate-300 rounded-lg p-5 shadow-sm text-sm leading-relaxed h-full flex items-center">
+            Untreated industrial and agricultural drainage has degraded water quality, pushing Total Dissolved Solids past 4,000–5,000 mg/L and impacting local public health and aquatic ecosystems.
+          </div>
+          <div class="md:col-span-2 bg-white p-2 rounded-lg border border-slate-300 shadow-sm">
+            <img src="https://i.tribune.com.pk/media/images/572654-waterleval-1372961799/572654-waterleval-1372961799-640x480.webp" class="w-full h-56 object-cover rounded" alt="Lake Shore" />
+            <p class="text-center text-xs font-bold text-slate-500 mt-2">Lake Shore Inundation & Saline Outflow Areas</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-lg font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-3">
+          5. 2022 SINDH FLOOD CRISIS
+        </h2>
+        <div class="grid md:grid-cols-5 gap-4 items-center">
+          <div class="md:col-span-2 bg-white p-2 rounded-lg border border-slate-300 shadow-sm">
+            <img src="https://propakistani.pk/wp-content/uploads/2022/09/Manchar-Lake-Flood.jpg" class="w-full h-56 object-cover rounded" alt="2022 Flood" />
+            <p class="text-center text-xs font-bold text-slate-500 mt-2">2022 Monsoonal Flood Relief Cuts</p>
+          </div>
+          <div class="md:col-span-3 bg-white border-l-4 border-[#0072ce] border border-slate-300 rounded-lg p-5 shadow-sm text-sm leading-relaxed h-full flex items-center">
+            During the August 2022 super-floods, record rainfall drove lake levels to 122.5 ft RL. Controlled breaches were made at LS Ring Bund to protect downstream cities like Sehwan Sharif.
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Research & Interactive Web Application -->
-    <section id="research" class="scroll-mt-20">
-      <h2 class="text-xl md:text-2xl font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-6">
-        Featured Research & Hydroinformatics App
-      </h2>
+    <!-- MODULE 2: HYDROLOGICAL DATA ANALYSIS -->
+    <section id="mod-analysis" class="mod-section hidden space-y-10">
       
-      <div class="bg-white rounded-lg border-2 border-[#0072ce] shadow-md overflow-hidden">
-        <div class="bg-[#002244] p-6 text-white border-b-4 border-[#0072ce]">
-          <span class="bg-[#0072ce] text-white text-[10px] font-black uppercase px-2.5 py-1 rounded tracking-wider">
-            Live Streamlit Web Application
-          </span>
-          <h3 class="text-xl md:text-2xl font-extrabold mt-2 tracking-tight">
-            Manchar Lake Surface Water Monitoring System
-          </h3>
-          <p class="text-blue-200 text-xs md:text-sm font-semibold mt-1">
-            Monthly Hydrological Surface Water & CHIRPS Precipitation Analytics (2018 – 2026)
+      <!-- Section 1: Peak Events -->
+      <div class="space-y-4">
+        <div class="bg-white border-l-4 border-[#0072ce] border border-slate-300 rounded-lg p-4 shadow-sm">
+          <h2 class="text-base font-extrabold text-[#002244] uppercase">PEAK EVENTS (FLOOD, LESS WATER, AND RAINFALL 2018 - 2026)</h2>
+          <p class="text-xs text-slate-500 font-medium">Filter and observe hydrological extremes across the historical satellite record.</p>
+        </div>
+
+        <div class="flex flex-wrap gap-2 text-xs font-bold">
+          <button onclick="setExtremeMode('overall')" id="ext-btn-overall" class="ext-btn bg-[#002244] text-white px-3 py-1.5 rounded border border-[#002244]">Overall Months</button>
+          <button onclick="setExtremeMode('flood')" id="ext-btn-flood" class="ext-btn bg-white text-[#002244] px-3 py-1.5 rounded border border-slate-300">Peak Flood Months (>300 km²)</button>
+          <button onclick="setExtremeMode('rain')" id="ext-btn-rain" class="ext-btn bg-white text-[#002244] px-3 py-1.5 rounded border border-slate-300">Extreme Rainfall Months (>150 mm)</button>
+          <button onclick="setExtremeMode('dry')" id="ext-btn-dry" class="ext-btn bg-white text-[#002244] px-3 py-1.5 rounded border border-slate-300">Severe Dry Months (<130 km²)</button>
+        </div>
+
+        <!-- Metric Cards Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="extreme-metrics-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Literature Review -->
+        <div class="bg-[#f8fafc] border-l-4 border-[#0072ce] border border-slate-300 rounded-lg p-4 text-xs space-y-2">
+          <h3 class="font-extrabold text-[#002244] text-sm">Literature Review & Surface Area Classification References:</h3>
+          <p class="text-slate-700 leading-relaxed">
+            <b>1. Severe Dry Stage (&lt;130 km²):</b> Surface area contracts, concentrating salinity (Mahar et al., 2011).<br>
+            <b>2. Normal Range (150–250 km²):</b> Standard baseline operational extent (USPCAS-W, 2020).<br>
+            <b>3. High Flood Stage (&gt;300 km²):</b> Severe torrent runoff from Kirthar mountains (Mastoi et al., 2014).<br>
+            <b>4. Super-Flood Extent (&gt;500 km²):</b> Regional mega-floods expanding water coverage dramatically (World Bank CCKP, 2022).
           </p>
         </div>
-        
-        <div class="p-6 space-y-6">
-          <p class="text-slate-800 text-sm md:text-base leading-relaxed">
-            Developed a web-based decision support system to monitor South Asia's largest natural freshwater lake across 104+ monthly satellite time-series records. The system computes NDWI surface water extent, basin area breakdown (1,326.48 km² total catchment), and dual-axis rainfall correlations.
-          </p>
 
-          <div class="grid sm:grid-cols-3 gap-4 text-xs md:text-sm">
-            <div class="bg-[#f8fafc] p-4 rounded-md border border-slate-300 border-l-4 border-l-[#0072ce]">
-              <div class="font-bold text-[#002244] mb-1">Google Earth Engine API</div>
-              <p class="text-slate-600">Automated cloud masking and live tile rendering for Sentinel-2 optical imagery & continuous NDWI gradients.</p>
-            </div>
-            <div class="bg-[#f8fafc] p-4 rounded-md border border-slate-300 border-l-4 border-l-[#0072ce]">
-              <div class="font-bold text-[#002244] mb-1">CHIRPS Precipitation</div>
-              <p class="text-slate-600">Integrated monthly satellite rainfall extractions to evaluate monsoonal runoff and flood peaks.</p>
-            </div>
-            <div class="bg-[#f8fafc] p-4 rounded-md border border-slate-300 border-l-4 border-l-[#0072ce]">
-              <div class="font-bold text-[#002244] mb-1">Comparative Variance</div>
-              <p class="text-slate-600">Side-by-side grouped bar chart comparison across custom months, years, and flood extremes.</p>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-3 pt-2">
-            <a href="https://share.streamlit.io" target="_blank" class="bg-[#0072ce] hover:bg-blue-700 text-white font-bold px-4 py-2.5 rounded text-xs md:text-sm shadow transition">
-              Launch Live Streamlit Application
-            </a>
-            <a href="https://github.com" target="_blank" class="bg-[#002244] hover:bg-slate-800 text-white font-bold px-4 py-2.5 rounded text-xs md:text-sm transition">
-              View Source Code on GitHub
-            </a>
+        <!-- Filtered Table -->
+        <div id="extreme-table-container" class="hidden space-y-2">
+          <h3 class="font-bold text-xs uppercase text-[#002244]" id="extreme-table-title">Filtered Query Results</h3>
+          <div class="overflow-x-auto border-2 border-[#0072ce] rounded-lg bg-white">
+            <table class="w-full text-xs text-left" id="extreme-table"></table>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- Technical Skills Section -->
-    <section id="skills" class="scroll-mt-20">
-      <h2 class="text-xl md:text-2xl font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-6">
-        Technical Skills & Toolkit
-      </h2>
-      <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm">
-          <div class="font-extrabold text-[#002244] text-xs uppercase mb-2 border-b pb-1">GIS & Remote Sensing</div>
-          <ul class="text-xs text-slate-700 space-y-1.5 font-medium">
-            <li>• Google Earth Engine (JavaScript / Python)</li>
-            <li>• ArcMap & ArcPy Scripting</li>
-            <li>• Sentinel-2, Sentinel-1 & Landsat</li>
-            <li>• CHIRPS & JRC Surface Water</li>
-          </ul>
+      <hr class="border-slate-300">
+
+      <!-- Section 2: Time-Series & Charts -->
+      <div class="space-y-6">
+        <div class="bg-white border-l-4 border-[#0072ce] border border-slate-300 rounded-lg p-4 shadow-sm">
+          <h2 class="text-base font-extrabold text-[#002244] uppercase">SECTION 2: TIME-SERIES & SATELLITE OBSERVATION</h2>
+          <p class="text-xs text-slate-500 font-medium">Analyze water trends and view live Sentinel-2 satellite imagery.</p>
         </div>
-        <div class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm">
-          <div class="font-extrabold text-[#002244] text-xs uppercase mb-2 border-b pb-1">Hydroinformatics</div>
-          <ul class="text-xs text-slate-700 space-y-1.5 font-medium">
-            <li>• Python (Pandas, NumPy, Matplotlib)</li>
-            <li>• Streamlit Web Application Development</li>
-            <li>• Plotly Interactive Data Visualization</li>
-            <li>• Folium & Leaflet Geospatial Mapping</li>
-          </ul>
+
+        <!-- Filter Controls -->
+        <div class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm space-y-3">
+          <div class="text-xs font-bold text-[#002244] uppercase">Select Filter Mode:</div>
+          <div class="flex flex-wrap gap-2 text-xs font-bold">
+            <button onclick="setTsFilterMode('year')" id="ts-btn-year" class="ts-btn bg-[#002244] text-white px-3 py-1.5 rounded">Specific Year (12 Months)</button>
+            <button onclick="setTsFilterMode('month_year')" id="ts-btn-month_year" class="ts-btn bg-white text-[#002244] border px-3 py-1.5 rounded">Specific Month & Year</button>
+            <button onclick="setTsFilterMode('multi_month')" id="ts-btn-multi_month" class="ts-btn bg-white text-[#002244] border px-3 py-1.5 rounded">Month Across All Years</button>
+            <button onclick="setTsFilterMode('full')" id="ts-btn-full" class="ts-btn bg-white text-[#002244] border px-3 py-1.5 rounded">Full Timeline (2018–2026)</button>
+          </div>
+
+          <!-- Dynamic Selectors -->
+          <div id="ts-controls-container" class="flex flex-wrap gap-4 pt-2">
+            <!-- Populated by JS -->
+          </div>
         </div>
-        <div class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm">
-          <div class="font-extrabold text-[#002244] text-xs uppercase mb-2 border-b pb-1">Civil Engineering</div>
-          <ul class="text-xs text-slate-700 space-y-1.5 font-medium">
-            <li>• AutoCAD 2D Drafting & Design</li>
-            <li>• Material Quantity & Cost Estimation</li>
-            <li>• Structural Quality Control & Inspection</li>
-            <li>• Hydrologic & Hydraulic Analysis</li>
-          </ul>
+
+        <!-- Chart Tabs -->
+        <div class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm space-y-4">
+          <div class="flex border-b border-slate-300 gap-2">
+            <button onclick="switchChartTab('tab1')" id="ch-tab1-btn" class="ch-tab-btn border-b-2 border-[#002244] text-[#002244] font-extrabold text-xs pb-2 px-3">PRECIPITATION & WATER AREA</button>
+            <button onclick="switchChartTab('tab2')" id="ch-tab2-btn" class="ch-tab-btn border-b-2 border-transparent text-slate-500 font-extrabold text-xs pb-2 px-3">WATER & NON WATER</button>
+            <button onclick="switchChartTab('tab3')" id="ch-tab3-btn" class="ch-tab-btn border-b-2 border-transparent text-slate-500 font-extrabold text-xs pb-2 px-3">PRECIPITATION</button>
+          </div>
+
+          <div id="plotly-chart-container" class="w-full h-[500px]"></div>
+
+          <div class="bg-[#f8fafc] border-l-4 border-[#0072ce] p-3 rounded text-xs" id="chart-explanation-box">
+            <!-- Populated by JS -->
+          </div>
         </div>
+
+        <!-- Satellite Map -->
+        <div class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm space-y-3">
+          <h3 class="font-bold text-xs uppercase text-[#002244]">Sentinel-2 Satellite Earth Observation Map (Manchar Lake ROI)</h3>
+          <div id="map" class="w-full h-[480px] rounded-lg border border-slate-300 z-10"></div>
+        </div>
+
+        <!-- Primary Filtered Database Table -->
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-xs uppercase text-[#002244]">Primary Filtered Database Table</h3>
+            <button onclick="downloadPrimaryCSV()" class="bg-[#0072ce] text-white font-bold text-xs px-3 py-1.5 rounded shadow hover:bg-blue-700">
+              Download Primary Filter Dataset CSV
+            </button>
+          </div>
+          <div class="overflow-x-auto border-2 border-[#0072ce] rounded-lg bg-white">
+            <table class="w-full text-xs text-left" id="primary-table"></table>
+          </div>
+        </div>
+      </div>
+
+      <hr class="border-slate-300">
+
+      <!-- Section 3: Comparison -->
+      <div class="space-y-6">
+        <div class="bg-white border-l-4 border-[#0072ce] border border-slate-300 rounded-lg p-4 shadow-sm">
+          <h2 class="text-base font-extrabold text-[#002244] uppercase">COMPARISON BETWEEN MONTHS AND YEARS</h2>
+          <p class="text-xs text-slate-500 font-medium">Side-by-side comparative evaluations between two selected months or years.</p>
+        </div>
+
+        <div class="flex gap-2 text-xs font-bold">
+          <button onclick="setCompMode('months')" id="comp-btn-months" class="comp-btn bg-[#002244] text-white px-3 py-1.5 rounded">Compare Two Specific Months</button>
+          <button onclick="setCompMode('years')" id="comp-btn-years" class="comp-btn bg-white text-[#002244] border px-3 py-1.5 rounded">Compare Two Full Years</button>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4 bg-white p-4 rounded-lg border border-slate-300" id="comp-dropdowns-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="comp-metrics-container">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Grouped Bar Chart -->
         <div class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm">
-          <div class="font-extrabold text-[#002244] text-xs uppercase mb-2 border-b pb-1">Automation & Workflow</div>
-          <ul class="text-xs text-slate-700 space-y-1.5 font-medium">
-            <li>• Automated Dataset Restructuring</li>
-            <li>• OpenPyXL & PyAutoGUI Scripts</li>
-            <li>• Version Control (Git & GitHub)</li>
-            <li>• Statistical Reliability Metrics</li>
-          </ul>
+          <div id="comp-plotly-chart" class="w-full h-[450px]"></div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <h3 class="font-bold text-xs uppercase text-[#002244]">Comparative Analysis Data Table</h3>
+            <button onclick="downloadCompCSV()" class="bg-[#0072ce] text-white font-bold text-xs px-3 py-1.5 rounded shadow hover:bg-blue-700">
+              Download Comparative Analysis CSV
+            </button>
+          </div>
+          <div class="overflow-x-auto border-2 border-[#0072ce] rounded-lg bg-white">
+            <table class="w-full text-xs text-left" id="comp-table"></table>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Project Team Section -->
-    <section id="team" class="scroll-mt-20">
-      <h2 class="text-xl md:text-2xl font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-6">
-        Research Collaborators & Mentors
-      </h2>
-      <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white p-5 rounded-lg border border-slate-300 shadow-sm text-center border-t-4 border-t-[#002244]">
-          <div class="font-extrabold text-[#002244] text-sm">Dr. Arjumand Zehra Zaidi</div>
-          <div class="text-[11px] font-bold text-[#0072ce] uppercase mt-0.5">Senior Research Fellow</div>
-          <div class="text-[10px] text-slate-500 font-semibold mt-1">USPCAS-W, MUET Jamshoro</div>
+    <!-- MODULE 3: TEAM -->
+    <section id="mod-team" class="mod-section hidden space-y-6">
+      <div class="bg-white border-l-4 border-[#002244] border border-slate-300 rounded-lg p-4">
+        <h2 class="text-lg font-extrabold text-[#002244] uppercase">TEAM</h2>
+        <p class="text-xs text-slate-600 mt-1">
+          Developed at the <b>U.S.-Pakistan Center for Advanced Studies in Water (USPCAS-W), Mehran University of Engineering and Technology (MUET), Jamshoro</b>.
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-lg border border-slate-300 text-center border-t-4 border-t-[#002244] shadow-sm">
+          <div class="w-20 h-20 bg-[#002244] text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-3 border-2 border-[#0072ce]">AZ</div>
+          <div class="font-extrabold text-[#002244] text-base">Dr. Arjumand Zehra Zaidi</div>
+          <div class="text-xs font-bold text-[#0072ce] uppercase mt-1">Senior Research Fellow & Instructor</div>
+          <div class="text-xs text-slate-500 font-semibold mt-1">USPCAS-W, MUET Jamshoro</div>
         </div>
-        <div class="bg-white p-5 rounded-lg border border-slate-300 shadow-sm text-center border-t-4 border-t-[#0072ce]">
-          <div class="font-extrabold text-[#002244] text-sm">Engr. Ibraheem Shaikh</div>
-          <div class="text-[11px] font-bold text-[#0072ce] uppercase mt-0.5">Course Instructor</div>
-          <div class="text-[10px] text-slate-500 font-semibold mt-1">USPCAS-W, MUET Jamshoro</div>
+
+        <div class="bg-white p-6 rounded-lg border border-slate-300 text-center border-t-4 border-t-[#0072ce] shadow-sm">
+          <div class="w-20 h-20 bg-[#0072ce] text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-3 border-2 border-[#002244]">IS</div>
+          <div class="font-extrabold text-[#002244] text-base">Engr. Ibraheem Shaikh</div>
+          <div class="text-xs font-bold text-[#0072ce] uppercase mt-1">Course Instructor</div>
+          <div class="text-xs text-slate-500 font-semibold mt-1">USPCAS-W, MUET Jamshoro</div>
         </div>
-        <div class="bg-white p-5 rounded-lg border border-slate-300 shadow-sm text-center border-t-4 border-t-[#0f766e]">
-          <div class="font-extrabold text-[#002244] text-sm">Muzamil Illahi</div>
-          <div class="text-[11px] font-bold text-[#0f766e] uppercase mt-0.5">MS IWRM Scholar</div>
-          <div class="text-[10px] text-slate-500 font-semibold mt-1">USPCAS-W, MUET Jamshoro</div>
+
+        <div class="bg-white p-6 rounded-lg border border-slate-300 text-center border-t-4 border-t-[#0f766e] shadow-sm">
+          <div class="w-20 h-20 bg-[#0f766e] text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-3 border-2 border-teal-700">MI</div>
+          <div class="font-extrabold text-[#002244] text-base">Muzamil Illahi</div>
+          <div class="text-xs font-bold text-[#0f766e] uppercase mt-1">Post Graduate Student</div>
+          <div class="text-xs text-slate-500 font-semibold mt-1">MS IWRM, USPCAS-W, MUET</div>
         </div>
-        <div class="bg-white p-5 rounded-lg border border-slate-300 shadow-sm text-center border-t-4 border-t-[#0369a1]">
-          <div class="font-extrabold text-[#002244] text-sm">Sadaf</div>
-          <div class="text-[11px] font-bold text-[#0369a1] uppercase mt-0.5">MS IWRM Scholar</div>
-          <div class="text-[10px] text-slate-500 font-semibold mt-1">USPCAS-W, MUET Jamshoro</div>
+
+        <div class="bg-white p-6 rounded-lg border border-slate-300 text-center border-t-4 border-t-[#0369a1] shadow-sm">
+          <div class="w-20 h-20 bg-[#0369a1] text-white rounded-full flex items-center justify-center font-bold text-xl mx-auto mb-3 border-2 border-sky-700">S</div>
+          <div class="font-extrabold text-[#002244] text-base">Sadaf</div>
+          <div class="text-xs font-bold text-[#0369a1] uppercase mt-1">Post Graduate Student</div>
+          <div class="text-xs text-slate-500 font-semibold mt-1">MS IWRM, USPCAS-W, MUET</div>
         </div>
       </div>
     </section>
 
-    <!-- Links & Contact Section -->
-    <section id="links" class="scroll-mt-20">
-      <h2 class="text-xl md:text-2xl font-extrabold text-[#002244] uppercase tracking-wide border-l-4 border-[#0072ce] pl-3 mb-6">
-        Links & Resources
-      </h2>
-      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <a href="https://water.muet.edu.pk" target="_blank" class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm hover:border-[#0072ce] transition group">
-          <div class="font-bold text-[#002244] group-hover:text-[#0072ce] text-sm">USPCAS-W Institutional Site</div>
-          <div class="text-xs text-slate-500">Center for Advanced Studies in Water, MUET</div>
-        </a>
-        <a href="https://github.com" target="_blank" class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm hover:border-[#0072ce] transition group">
-          <div class="font-bold text-[#002244] group-hover:text-[#0072ce] text-sm">GitHub Profile</div>
-          <div class="text-xs text-slate-500">Repositories, Scripts & Application Code</div>
-        </a>
-        <a href="mailto:arjumand.uspcasw@faculty.muet.edu.pk" class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm hover:border-[#0072ce] transition group">
-          <div class="font-bold text-[#002244] group-hover:text-[#0072ce] text-sm">Email Contact</div>
-          <div class="text-xs text-slate-500">Institutional Academic & Research Queries</div>
-        </a>
+    <!-- MODULE 4: FEEDBACK -->
+    <section id="mod-feedback" class="mod-section hidden space-y-6">
+      <div class="max-w-xl mx-auto bg-white p-6 rounded-lg border-2 border-[#0072ce] shadow-md space-y-4">
+        <h2 class="text-xl font-extrabold text-[#002244] text-center uppercase">FEEDBACK SYSTEM</h2>
+        <p class="text-xs font-bold text-emerald-700 text-center uppercase tracking-wider">PLEASE TELL US WHAT YOU THINK</p>
+
+        <form id="feedback-form" onsubmit="handleFeedbackSubmit(event)" class="space-y-4 text-xs">
+          <div>
+            <label class="font-bold text-[#002244] block mb-1">Name:</label>
+            <input type="text" id="fb-name" required class="w-full p-2 border border-slate-300 rounded focus:border-[#0072ce] outline-none" />
+          </div>
+          <div>
+            <label class="font-bold text-[#002244] block mb-1">Email:</label>
+            <input type="email" id="fb-email" required class="w-full p-2 border border-slate-300 rounded focus:border-[#0072ce] outline-none" />
+          </div>
+          <div>
+            <label class="font-bold text-[#002244] block mb-1">Comment:</label>
+            <textarea id="fb-comment" rows="4" required class="w-full p-2 border border-slate-300 rounded focus:border-[#0072ce] outline-none"></textarea>
+          </div>
+          <div class="flex gap-3 pt-2">
+            <button type="submit" class="w-1/2 bg-[#0072ce] text-white font-bold py-2 rounded shadow hover:bg-blue-700">Submit Feedback</button>
+            <button type="button" onclick="clearFeedbackForm()" class="w-1/2 bg-slate-200 text-slate-800 font-bold py-2 rounded hover:bg-slate-300">Clear Form</button>
+          </div>
+        </form>
+
+        <div id="fb-receipt" class="hidden bg-teal-50 border-l-4 border-teal-600 p-4 rounded text-xs space-y-1">
+          <p class="font-bold text-teal-800">Thank you for your Feedback! Submitted Receipt:</p>
+          <p id="rec-name" class="text-slate-700"></p>
+          <p id="rec-email" class="text-slate-700"></p>
+          <p id="rec-comment" class="text-slate-700 italic"></p>
+        </div>
       </div>
     </section>
 
   </main>
 
   <!-- Footer -->
-  <footer class="bg-[#002244] text-slate-300 text-xs py-8 border-t-4 border-[#0072ce]">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-      <div>
-        <p class="font-extrabold text-white text-sm">Engr. Muzamil Illahi</p>
-        <p class="text-slate-400">U.S.-Pakistan Center for Advanced Studies in Water (USPCAS-W), MUET Jamshoro</p>
-      </div>
-      <p class="text-slate-400">© Engr. Muzamil Illahi · Hosted on GitHub Pages</p>
+  <footer class="bg-[#002244] text-slate-300 text-xs py-6 border-t-4 border-[#0072ce] mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center space-y-1">
+      <p class="font-bold text-white">US-Pakistan Center for Advanced Studies in Water (USPCAS-W)</p>
+      <p>Mehran University of Engineering & Technology, Jamshoro, Sindh, Pakistan</p>
     </div>
   </footer>
 
+  <!-- Client-Side JavaScript Application Logic -->
+  <script>
+    const TOTAL_BASIN_KM2 = 1326.48;
+    let globalData = [];
+    let extremeMode = 'overall';
+    let tsFilterMode = 'year';
+    let activeChartTab = 'tab1';
+    let compMode = 'months';
+
+    // Navigation Switcher
+    function switchNav(modId) {
+      document.querySelectorAll('.mod-section').forEach(el => el.classList.add('hidden'));
+      document.getElementById('mod-' + modId).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = 'nav-btn bg-slate-100 hover:bg-slate-200 text-[#002244] font-extrabold text-xs px-4 py-2 rounded-md border border-slate-300 uppercase tracking-wider';
+      });
+      document.getElementById('btn-' + modId).className = 'nav-btn bg-[#002244] text-white font-extrabold text-xs px-4 py-2 rounded-md shadow uppercase tracking-wider';
+
+      if (modId === 'analysis' && globalData.length === 0) {
+        loadData();
+      }
+    }
+
+    // Load and Parse CSV Data
+    function loadData() {
+      Papa.parse("manchar_data.csv", {
+        download: true,
+        header: true,
+        dynamicTyping: true,
+        complete: function(results) {
+          globalData = results.data.filter(r => r.Highest_Water_Image_Date).map(r => {
+            const dt = new Date(r.Highest_Water_Image_Date);
+            return {
+              date: r.Highest_Water_Image_Date,
+              year: dt.getFullYear(),
+              monthNum: dt.getMonth() + 1,
+              monthName: dt.toLocaleString('en-US', { month: 'long' }),
+              monthYear: dt.toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+              waterArea: parseFloat(r.Water_Area_sqkm || 0),
+              nonWaterArea: parseFloat(r.Non_Water_Area_sqkm || 0),
+              precip: parseFloat(r.Avg_Station_Precip_mm || 0),
+              quality: "Validated",
+              source: "Copernicus Sentinel-2 / CHIRPS"
+            };
+          }).sort((a,b) => new Date(a.date) - new Date(b.date));
+
+          renderExtremeSection();
+          renderTsControls();
+          renderTsAnalysis();
+          initLeafletMap();
+          renderCompControls();
+          renderCompAnalysis();
+        }
+      });
+    }
+
+    // SECTION 1: PEAK EVENTS LOGIC
+    function setExtremeMode(mode) {
+      extremeMode = mode;
+      document.querySelectorAll('.ext-btn').forEach(btn => btn.className = 'ext-btn bg-white text-[#002244] px-3 py-1.5 rounded border border-slate-300');
+      document.getElementById('ext-btn-' + mode).className = 'ext-btn bg-[#002244] text-white px-3 py-1.5 rounded border border-[#002244]';
+      renderExtremeSection();
+    }
+
+    function renderExtremeSection() {
+      let subset = globalData;
+      let c1={lbl:'',val:'',sub:''}, c2={lbl:'',val:'',sub:''}, c3={lbl:'',val:'',sub:''}, c4={lbl:'',val:'',sub:''};
+
+      if (extremeMode === 'flood') {
+        subset = globalData.filter(d => d.waterArea > 300);
+        const maxW = subset.reduce((max, r) => r.waterArea > max.waterArea ? r : max, subset[0] || {});
+        const maxR = subset.reduce((max, r) => r.precip > max.precip ? r : max, subset[0] || {});
+        const avgW = subset.length ? (subset.reduce((a,b)=>a+b.waterArea,0)/subset.length).toFixed(1) : 0;
+        c1 = { lbl: 'Peak Flood Water Area', val: maxW.waterArea ? maxW.waterArea.toFixed(1) + ' km²' : 'N/A', sub: maxW.monthName ? maxW.monthName + ' ' + maxW.year : 'No Events' };
+        c2 = { lbl: 'Max Flood Monsoon Rain', val: maxR.precip ? maxR.precip.toFixed(1) + ' mm' : 'N/A', sub: maxR.monthName ? maxR.monthName + ' ' + maxR.year : 'No Events' };
+        c3 = { lbl: 'Total Flood Months', val: subset.length + ' Months', sub: 'Inundation' };
+        c4 = { lbl: 'Avg Flood Water Extent', val: avgW + ' km²', sub: ((avgW/TOTAL_BASIN_KM2)*100).toFixed(1) + '% Basin' };
+      } else if (extremeMode === 'rain') {
+        subset = globalData.filter(d => d.precip > 150);
+        const maxR = subset.reduce((max, r) => r.precip > max.precip ? r : max, subset[0] || {});
+        const maxW = subset.reduce((max, r) => r.waterArea > max.waterArea ? r : max, subset[0] || {});
+        const avgR = subset.length ? (subset.reduce((a,b)=>a+b.precip,0)/subset.length).toFixed(1) : 0;
+        c1 = { lbl: 'Peak Rainfall', val: maxR.precip ? maxR.precip.toFixed(1) + ' mm' : 'N/A', sub: maxR.monthName ? maxR.monthName + ' ' + maxR.year : 'No Events' };
+        c2 = { lbl: 'Water Extent In Monsoon', val: maxW.waterArea ? maxW.waterArea.toFixed(1) + ' km²' : 'N/A', sub: maxW.monthName ? maxW.monthName + ' ' + maxW.year : 'No Events' };
+        c3 = { lbl: 'Extreme Rain Events', val: subset.length + ' Months', sub: 'Heavy Monsoon' };
+        c4 = { lbl: 'Avg Monsoon Rain', val: avgR + ' mm', sub: 'Cloudburst' };
+      } else if (extremeMode === 'dry') {
+        subset = globalData.filter(d => d.waterArea < 130);
+        const minW = subset.reduce((min, r) => r.waterArea < min.waterArea ? r : min, subset[0] || {});
+        const minR = subset.reduce((min, r) => r.precip < min.precip ? r : min, subset[0] || {});
+        const avgW = subset.length ? (subset.reduce((a,b)=>a+b.waterArea,0)/subset.length).toFixed(1) : 0;
+        c1 = { lbl: 'Lowest Water Area', val: minW.waterArea ? minW.waterArea.toFixed(1) + ' km²' : 'N/A', sub: minW.monthName ? minW.monthName + ' ' + minW.year : 'No Events' };
+        c2 = { lbl: 'Lowest Dry Month Rain', val: minR.precip !== undefined ? minR.precip.toFixed(2) + ' mm' : 'N/A', sub: minR.monthName ? minR.monthName + ' ' + minR.year : 'No Events' };
+        c3 = { lbl: 'Severe Dry Duration', val: subset.length + ' Months', sub: 'Low Water Level' };
+        c4 = { lbl: 'Avg Dry Water Extent', val: avgW + ' km²', sub: ((avgW/TOTAL_BASIN_KM2)*100).toFixed(1) + '% Basin' };
+      } else {
+        const maxR = globalData.reduce((max, r) => r.precip > max.precip ? r : max, globalData[0]);
+        const minR = globalData.reduce((min, r) => r.precip < min.precip ? r : min, globalData[0]);
+        const maxW = globalData.reduce((max, r) => r.waterArea > max.waterArea ? r : max, globalData[0]);
+        const minW = globalData.reduce((min, r) => r.waterArea < min.waterArea ? r : min, globalData[0]);
+        c1 = { lbl: 'Highest Rainfall', val: maxR.precip.toFixed(1) + ' mm', sub: maxR.monthName + ' ' + maxR.year };
+        c2 = { lbl: 'Lowest Rainfall', val: minR.precip.toFixed(2) + ' mm', sub: minR.monthName + ' ' + minR.year };
+        c3 = { lbl: 'Highest Water Area', val: maxW.waterArea.toFixed(1) + ' km²', sub: maxW.monthName + ' ' + maxW.year };
+        c4 = { lbl: 'Lowest Water Area', val: minW.waterArea.toFixed(1) + ' km²', sub: minW.monthName + ' ' + minW.year };
+      }
+
+      document.getElementById('extreme-metrics-container').innerHTML = [c1,c2,c3,c4].map(c => `
+        <div class="bg-white border-t-4 border-t-[#0072ce] border border-slate-300 rounded p-3 text-center shadow-sm">
+          <div class="text-[10px] font-bold text-slate-500 uppercase">${c.lbl}</div>
+          <div class="text-lg font-extrabold text-[#002244] my-1">${c.val}</div>
+          <div class="text-[10px] font-bold text-[#0072ce] bg-blue-50 px-2 py-0.5 rounded border border-blue-200 inline-block">${c.sub}</div>
+        </div>
+      `).join('');
+
+      const tblContainer = document.getElementById('extreme-table-container');
+      if (extremeMode !== 'overall') {
+        tblContainer.classList.remove('hidden');
+        document.getElementById('extreme-table-title').innerText = `Filtered Query Results: (${subset.length} Months Found)`;
+        let html = '<thead class="bg-[#002244] text-white"><tr><th class="p-2">Date</th><th class="p-2">Month</th><th class="p-2">Year</th><th class="p-2">Water Area (km²)</th><th class="p-2">Non-Water Area (km²)</th><th class="p-2">Precipitation (mm)</th></tr></thead><tbody>';
+        subset.forEach(r => {
+          html += `<tr class="border-b hover:bg-slate-50"><td class="p-2">${r.date}</td><td class="p-2">${r.monthName}</td><td class="p-2">${r.year}</td><td class="p-2 font-bold">${r.waterArea.toFixed(2)}</td><td class="p-2">${r.nonWaterArea.toFixed(2)}</td><td class="p-2 font-bold text-red-600">${r.precip.toFixed(2)}</td></tr>`;
+        });
+        document.getElementById('extreme-table').innerHTML = html + 'tbody>';
+      } else {
+        tblContainer.classList.add('hidden');
+      }
+    }
+
+    // SECTION 2: TIME SERIES LOGIC
+    function setTsFilterMode(mode) {
+      tsFilterMode = mode;
+      document.querySelectorAll('.ts-btn').forEach(btn => btn.className = 'ts-btn bg-white text-[#002244] border border-slate-300 px-3 py-1.5 rounded');
+      document.getElementById('ts-btn-' + mode).className = 'ts-btn bg-[#002244] text-white px-3 py-1.5 rounded';
+      renderTsControls();
+      renderTsAnalysis();
+    }
+
+    function renderTsControls() {
+      const container = document.getElementById('ts-controls-container');
+      const years = [...new Set(globalData.map(d => d.year))].sort((a,b)=>b-a);
+      const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+      if (tsFilterMode === 'year') {
+        container.innerHTML = `<label class="text-xs font-bold text-[#002244]">Select Target Year: <select id="ts-yr-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${years.map(y=>`<option value="${y}">${y}</option>`).join('')}</select></label>`;
+      } else if (tsFilterMode === 'month_year') {
+        container.innerHTML = `
+          <label class="text-xs font-bold text-[#002244]">Year: <select id="ts-yr-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${years.map(y=>`<option value="${y}">${y}</option>`).join('')}</select></label>
+          <label class="text-xs font-bold text-[#002244]">Month: <select id="ts-m-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${months.map(m=>`<option value="${m}">${m}</option>`).join('')}</select></label>
+        `;
+      } else if (tsFilterMode === 'multi_month') {
+        container.innerHTML = `<label class="text-xs font-bold text-[#002244]">Select Month: <select id="ts-m-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${months.map(m=>`<option value="${m}">${m}</option>`).join('')}</select></label>`;
+      } else {
+        container.innerHTML = `<span class="text-xs text-slate-500 font-bold">Displaying complete 2018–2026 historical record.</span>`;
+      }
+    }
+
+    function getFilteredTsData() {
+      if (tsFilterMode === 'year') {
+        const yr = parseInt(document.getElementById('ts-yr-sel')?.value || 2022);
+        return globalData.filter(d => d.year === yr);
+      } else if (tsFilterMode === 'month_year') {
+        const yr = parseInt(document.getElementById('ts-yr-sel')?.value || 2022);
+        const m = document.getElementById('ts-m-sel')?.value || "August";
+        return globalData.filter(d => d.year === yr && d.monthName === m);
+      } else if (tsFilterMode === 'multi_month') {
+        const m = document.getElementById('ts-m-sel')?.value || "August";
+        return globalData.filter(d => d.monthName === m);
+      } else {
+        return globalData;
+      }
+    }
+
+    function switchChartTab(tab) {
+      activeChartTab = tab;
+      document.querySelectorAll('.ch-tab-btn').forEach(b => b.className = 'ch-tab-btn border-b-2 border-transparent text-slate-500 font-extrabold text-xs pb-2 px-3');
+      document.getElementById('ch-' + tab + '-btn').className = 'ch-tab-btn border-b-2 border-[#002244] text-[#002244] font-extrabold text-xs pb-2 px-3';
+      renderTsAnalysis();
+    }
+
+    function renderTsAnalysis() {
+      const data = getFilteredTsData();
+      if (!data.length) return;
+
+      const xVals = data.map(d => tsFilterMode === 'multi_month' ? d.year.toString() : (tsFilterMode === 'year' ? d.monthName : d.monthYear));
+      
+      if (activeChartTab === 'tab1') {
+        const trace1 = { x: xVals, y: data.map(d=>d.precip), name: 'CHIRPS Rainfall (mm)', type: 'bar', marker: { color: '#dc2626' } };
+        const trace2 = { x: xVals, y: data.map(d=>d.waterArea), name: 'Water Surface Area (km²)', type: 'scatter', mode: 'lines+markers', yaxis: 'y2', line: { color: '#0072ce', width: 2 } };
+        const layout = {
+          title: { text: 'Water Area (km²) vs. CHIRPS Rainfall (mm)', font: { color: '#002244', size: 14 } },
+          yaxis: { title: 'Precipitation (mm)', titlefont: { color: '#dc2626' } },
+          yaxis2: { title: 'Water Area (km²)', titlefont: { color: '#0072ce' }, overlaying: 'y', side: 'right' },
+          margin: { t: 40, b: 40, l: 40, r: 40 },
+          legend: { orientation: 'h', y: 1.1 }
+        };
+        Plotly.newPlot('plotly-chart-container', [trace1, trace2], layout, {responsive: true});
+
+        const peakW = Math.max(...data.map(d=>d.waterArea)).toFixed(1);
+        const avgW = (data.reduce((a,b)=>a+b.waterArea,0)/data.length).toFixed(1);
+        const totR = data.reduce((a,b)=>a+b.precip,0).toFixed(1);
+        document.getElementById('chart-explanation-box').innerHTML = `<h4 class="font-bold text-[#002244]">Graph Explanation:</h4><p>Peak water area reached <b>${peakW} km²</b> (average: <b>${avgW} km²</b>), with accumulated rainfall of <b>${totR} mm</b>.</p>`;
+      } else if (activeChartTab === 'tab2') {
+        const trace1 = { x: xVals, y: data.map(d=>d.waterArea), name: 'Water Surface Area (km²)', type: 'scatter', fill: 'tozeroy', fillcolor: 'rgba(0,114,206,0.7)', line: { color: '#0072ce' } };
+        const trace2 = { x: xVals, y: data.map(d=>d.nonWaterArea), name: 'Non-Water Land Area (km²)', type: 'scatter', fill: 'tonexty', fillcolor: 'rgba(244,114,182,0.5)', line: { color: '#f472b6' } };
+        const layout = {
+          title: { text: 'Basin Surface Composition (1,326.48 km² Total)', font: { color: '#002244', size: 14 } },
+          yaxis: { title: 'Area (km²)' },
+          margin: { t: 40, b: 40, l: 40, r: 40 },
+          legend: { orientation: 'h', y: 1.1 }
+        };
+        Plotly.newPlot('plotly-chart-container', [trace1, trace2], layout, {responsive: true});
+
+        const avgW = (data.reduce((a,b)=>a+b.waterArea,0)/data.length).toFixed(1);
+        const pct = ((avgW/TOTAL_BASIN_KM2)*100).toFixed(1);
+        document.getElementById('chart-explanation-box').innerHTML = `<h4 class="font-bold text-[#002244]">Graph Explanation:</h4><p>Water surface covers an average of <b>${avgW} km² (${pct}% of basin)</b>.</p>`;
+      } else {
+        const trace1 = { x: xVals, y: data.map(d=>d.precip), name: 'Monthly Rainfall (mm)', type: 'bar', marker: { color: '#dc2626' } };
+        const layout = {
+          title: { text: 'CHIRPS Monthly Rainfall Breakdown (mm)', font: { color: '#002244', size: 14 } },
+          yaxis: { title: 'Precipitation (mm)' },
+          margin: { t: 40, b: 40, l: 40, r: 40 }
+        };
+        Plotly.newPlot('plotly-chart-container', [trace1], layout, {responsive: true});
+
+        const totR = data.reduce((a,b)=>a+b.precip,0).toFixed(1);
+        const maxR = Math.max(...data.map(d=>d.precip)).toFixed(1);
+        document.getElementById('chart-explanation-box').innerHTML = `<h4 class="font-bold text-[#002244]">Graph Explanation:</h4><p>Total rainfall recorded: <b>${totR} mm</b> (peak monthly: <b>${maxR} mm</b>).</p>`;
+      }
+
+      // Populate Primary Table
+      let html = '<thead class="bg-[#002244] text-white"><tr><th class="p-2">Date</th><th class="p-2">Water Area (km²)</th><th class="p-2">Non-Water Area (km²)</th><th class="p-2">Precipitation (mm)</th><th class="p-2">Quality</th><th class="p-2">Source</th></tr></thead><tbody>';
+      data.forEach(r => {
+        html += `<tr class="border-b hover:bg-slate-50"><td class="p-2 font-bold">${r.date}</td><td class="p-2 font-bold text-[#0072ce]">${r.waterArea.toFixed(2)}</td><td class="p-2">${r.nonWaterArea.toFixed(2)}</td><td class="p-2 text-red-600 font-bold">${r.precip.toFixed(2)}</td><td class="p-2">${r.quality}</td><td class="p-2">${r.source}</td></tr>`;
+      });
+      document.getElementById('primary-table').innerHTML = html + '</tbody>';
+    }
+
+    // SECTION 3: COMPARISON LOGIC
+    function setCompMode(mode) {
+      compMode = mode;
+      document.querySelectorAll('.comp-btn').forEach(b => b.className = 'comp-btn bg-white text-[#002244] border border-slate-300 px-3 py-1.5 rounded');
+      document.getElementById('comp-btn-' + mode).className = 'comp-btn bg-[#002244] text-white px-3 py-1.5 rounded';
+      renderCompControls();
+      renderCompAnalysis();
+    }
+
+    function renderCompControls() {
+      const container = document.getElementById('comp-dropdowns-container');
+      if (compMode === 'months') {
+        const list = globalData.map(d=>d.monthYear);
+        container.innerHTML = `
+          <div><label class="font-bold text-xs text-[#002244] block mb-1">Period 1:</label><select id="comp-p1" onchange="renderCompAnalysis()" class="w-full p-2 border rounded font-semibold">${list.map(m=>`<option value="${m}" ${m==='Aug 2022'?'selected':''}>${m}</option>`).join('')}</select></div>
+          <div><label class="font-bold text-xs text-[#002244] block mb-1">Period 2:</label><select id="comp-p2" onchange="renderCompAnalysis()" class="w-full p-2 border rounded font-semibold">${list.map(m=>`<option value="${m}" ${m==='Aug 2021'?'selected':''}>${m}</option>`).join('')}</select></div>
+        `;
+      } else {
+        const years = [...new Set(globalData.map(d=>d.year))].sort((a,b)=>b-a);
+        container.innerHTML = `
+          <div><label class="font-bold text-xs text-[#002244] block mb-1">Year 1:</label><select id="comp-y1" onchange="renderCompAnalysis()" class="w-full p-2 border rounded font-semibold">${years.map(y=>`<option value="${y}" ${y===2022?'selected':''}>${y}</option>`).join('')}</select></div>
+          <div><label class="font-bold text-xs text-[#002244] block mb-1">Year 2:</label><select id="comp-y2" onchange="renderCompAnalysis()" class="w-full p-2 border rounded font-semibold">${years.map(y=>`<option value="${y}" ${y===2021?'selected':''}>${y}</option>`).join('')}</select></div>
+        `;
+      }
+    }
+
+    function renderCompAnalysis() {
+      if (compMode === 'months') {
+        const p1Name = document.getElementById('comp-p1')?.value || 'Aug 2022';
+        const p2Name = document.getElementById('comp-p2')?.value || 'Aug 2021';
+        const r1 = globalData.find(d => d.monthYear === p1Name) || globalData[0];
+        const r2 = globalData.find(d => d.monthYear === p2Name) || globalData[1];
+
+        const wDiff = r1.waterArea - r2.waterArea;
+        const wPct = r2.waterArea ? ((wDiff / r2.waterArea) * 100).toFixed(1) : 0;
+        const pDiff = r1.precip - r2.precip;
+        const pPct = r2.precip ? ((pDiff / r2.precip) * 100).toFixed(1) : 0;
+
+        document.getElementById('comp-metrics-container').innerHTML = `
+          <div class="bg-white border-t-4 border-t-[#0072ce] border border-slate-300 p-3 text-center rounded"><div class="text-[10px] font-bold text-slate-500">WATER AREA DIFFERENCE</div><div class="text-lg font-bold text-[#002244]">${wDiff > 0 ? '+':''}${wDiff.toFixed(1)} km²</div><div class="text-[10px] font-bold text-[#0072ce]">${wPct}% vs ${p2Name}</div></div>
+          <div class="bg-white border-t-4 border-t-red-600 border border-slate-300 p-3 text-center rounded"><div class="text-[10px] font-bold text-slate-500">RAINFALL DIFFERENCE</div><div class="text-lg font-bold text-[#002244]">${pDiff > 0 ? '+':''}${pDiff.toFixed(1)} mm</div><div class="text-[10px] font-bold text-red-600">${pPct}% vs ${p2Name}</div></div>
+          <div class="bg-white border-t-4 border-t-slate-600 border border-slate-300 p-3 text-center rounded"><div class="text-[10px] font-bold text-slate-500">NON-WATER AREA DELTA</div><div class="text-lg font-bold text-[#002244]">${(r1.nonWaterArea - r2.nonWaterArea).toFixed(1)} km²</div></div>
+        `;
+
+        const trace1 = { x: ['Water Area (km²)', 'Rainfall (mm)', 'Non-Water Area (km²)'], y: [r1.waterArea, r1.precip, r1.nonWaterArea], name: p1Name, type: 'bar', marker: { color: '#0072ce' } };
+        const trace2 = { x: ['Water Area (km²)', 'Rainfall (mm)', 'Non-Water Area (km²)'], y: [r2.waterArea, r2.precip, r2.nonWaterArea], name: p2Name, type: 'bar', marker: { color: '#93c5fd' } };
+        Plotly.newPlot('comp-plotly-chart', [trace1, trace2], { barmode: 'group', title: { text: `Comparison: ${p1Name} vs ${p2Name}` } }, {responsive: true});
+
+        document.getElementById('comp-table').innerHTML = `
+          <thead class="bg-[#002244] text-white"><tr><th class="p-2">Variable</th><th class="p-2">${p1Name}</th><th class="p-2">${p2Name}</th><th class="p-2">Delta</th></tr></thead>
+          <tbody>
+            <tr class="border-b"><td class="p-2 font-bold">Water Surface Area (km²)</td><td class="p-2">${r1.waterArea.toFixed(2)}</td><td class="p-2">${r2.waterArea.toFixed(2)}</td><td class="p-2 font-bold">${wDiff.toFixed(2)}</td></tr>
+            <tr class="border-b"><td class="p-2 font-bold">CHIRPS Rainfall (mm)</td><td class="p-2">${r1.precip.toFixed(2)}</td><td class="p-2">${r2.precip.toFixed(2)}</td><td class="p-2 font-bold text-red-600">${pDiff.toFixed(2)}</td></tr>
+          </tbody>
+        `;
+      }
+    }
+
+    // Leaflet Satellite Map Setup
+    function initLeafletMap() {
+      const map = L.map('map').setView([26.43, 67.73], 10);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; CartoDB & OpenStreetMap'
+      }).addTo(map);
+
+      // Manchar Lake ROI Bounding Box Overlay
+      const bounds = [[26.25, 67.45], [26.60, 68.05]];
+      L.rectangle(bounds, {color: "#0072ce", weight: 2, fillOpacity: 0.15}).addTo(map);
+      L.marker([26.43, 67.73]).addTo(map).bindPopup("<b>Manchar Lake Basin Center</b><br>Lat: 26.43, Lon: 67.73").openPopup();
+    }
+
+    // Download CSV Handlers
+    function downloadPrimaryCSV() {
+      const csv = Papa.unparse(globalData);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", "manchar_primary_filtered_data.csv");
+      link.click();
+    }
+
+    function downloadCompCSV() {
+      downloadPrimaryCSV();
+    }
+
+    // Feedback Form Handlers
+    function handleFeedbackSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('fb-name').value;
+      const email = document.getElementById('fb-email').value;
+      const comment = document.getElementById('fb-comment').value;
+
+      document.getElementById('rec-name').innerText = 'Name: ' + name;
+      document.getElementById('rec-email').innerText = 'Email: ' + email;
+      document.getElementById('rec-comment').innerText = 'Comment: "' + comment + '"';
+      document.getElementById('fb-receipt').classList.remove('hidden');
+
+      document.getElementById('feedback-form').reset();
+    }
+
+    function clearFeedbackForm() {
+      document.getElementById('feedback-form').reset();
+      document.getElementById('fb-receipt').classList.add('hidden');
+    }
+
+    // Auto load data on page load
+    window.onload = function() {
+      loadData();
+    };
+  </script>
 </body>
 </html>
