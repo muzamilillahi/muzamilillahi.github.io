@@ -177,10 +177,10 @@
 
         <!-- Filter Controls -->
         <div class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm space-y-3">
-          <div class="text-xs font-bold text-[#002244] uppercase">Select Filter Mode:</div>
+          <div class="text-xs font-bold text-[#002244] uppercase">Select Primary Filter Mode:</div>
           <div class="flex flex-wrap gap-2 text-xs font-bold">
             <button onclick="setTsFilterMode('year')" id="ts-btn-year" class="ts-btn bg-[#002244] text-white px-3 py-1.5 rounded">Specific Year (12 Months)</button>
-            <button onclick="setTsFilterMode('month_year')" id="ts-btn-month_year" class="ts-btn bg-white text-[#002244] border px-3 py-1.5 rounded">Specific Month & Year</button>
+            <button onclick="setTsFilterMode('month_year')" id="ts-btn-month_year" class="ts-btn bg-white text-[#002244] border px-3 py-1.5 rounded">Specific Month & Year (Single Month)</button>
             <button onclick="setTsFilterMode('multi_month')" id="ts-btn-multi_month" class="ts-btn bg-white text-[#002244] border px-3 py-1.5 rounded">Month Across All Years</button>
             <button onclick="setTsFilterMode('full')" id="ts-btn-full" class="ts-btn bg-white text-[#002244] border px-3 py-1.5 rounded">Full Timeline (2018–2026)</button>
           </div>
@@ -191,9 +191,9 @@
           </div>
         </div>
 
-        <!-- Chart Tabs -->
+        <!-- Chart Tabs & Container -->
         <div class="bg-white p-4 rounded-lg border border-slate-300 shadow-sm space-y-4">
-          <div class="flex border-b border-slate-300 gap-2">
+          <div id="chart-tabs-wrapper" class="flex border-b border-slate-300 gap-2">
             <button onclick="switchChartTab('tab1')" id="ch-tab1-btn" class="ch-tab-btn border-b-2 border-[#002244] text-[#002244] font-extrabold text-xs pb-2 px-3">PRECIPITATION & WATER AREA</button>
             <button onclick="switchChartTab('tab2')" id="ch-tab2-btn" class="ch-tab-btn border-b-2 border-transparent text-slate-500 font-extrabold text-xs pb-2 px-3">WATER & NON WATER</button>
             <button onclick="switchChartTab('tab3')" id="ch-tab3-btn" class="ch-tab-btn border-b-2 border-transparent text-slate-500 font-extrabold text-xs pb-2 px-3">PRECIPITATION</button>
@@ -476,7 +476,7 @@
         subset.forEach(r => {
           html += `<tr class="border-b hover:bg-slate-50"><td class="p-2">${r.date}</td><td class="p-2">${r.monthName}</td><td class="p-2">${r.year}</td><td class="p-2 font-bold">${r.waterArea.toFixed(2)}</td><td class="p-2">${r.nonWaterArea.toFixed(2)}</td><td class="p-2 font-bold text-red-600">${r.precip.toFixed(2)}</td></tr>`;
         });
-        document.getElementById('extreme-table').innerHTML = html + 'tbody>';
+        document.getElementById('extreme-table').innerHTML = html + '</tbody>';
       } else {
         tblContainer.classList.add('hidden');
       }
@@ -500,8 +500,8 @@
         container.innerHTML = `<label class="text-xs font-bold text-[#002244]">Select Target Year: <select id="ts-yr-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${years.map(y=>`<option value="${y}">${y}</option>`).join('')}</select></label>`;
       } else if (tsFilterMode === 'month_year') {
         container.innerHTML = `
-          <label class="text-xs font-bold text-[#002244]">Year: <select id="ts-yr-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${years.map(y=>`<option value="${y}">${y}</option>`).join('')}</select></label>
-          <label class="text-xs font-bold text-[#002244]">Month: <select id="ts-m-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${months.map(m=>`<option value="${m}">${m}</option>`).join('')}</select></label>
+          <label class="text-xs font-bold text-[#002244]">Year: <select id="ts-yr-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${years.map(y=>`<option value="${y}" ${y===2022?'selected':''}>${y}</option>`).join('')}</select></label>
+          <label class="text-xs font-bold text-[#002244]">Month: <select id="ts-m-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${months.map(m=>`<option value="${m}" ${m==='August'?'selected':''}>${m}</option>`).join('')}</select></label>
         `;
       } else if (tsFilterMode === 'multi_month') {
         container.innerHTML = `<label class="text-xs font-bold text-[#002244]">Select Month: <select id="ts-m-sel" onchange="renderTsAnalysis()" class="p-1 border rounded bg-white font-semibold">${months.map(m=>`<option value="${m}">${m}</option>`).join('')}</select></label>`;
@@ -537,50 +537,80 @@
       const data = getFilteredTsData();
       if (!data.length) return;
 
-      const xVals = data.map(d => tsFilterMode === 'multi_month' ? d.year.toString() : (tsFilterMode === 'year' ? d.monthName : d.monthYear));
-      
-      if (activeChartTab === 'tab1') {
-        const trace1 = { x: xVals, y: data.map(d=>d.precip), name: 'CHIRPS Rainfall (mm)', type: 'bar', marker: { color: '#dc2626' } };
-        const trace2 = { x: xVals, y: data.map(d=>d.waterArea), name: 'Water Surface Area (km²)', type: 'scatter', mode: 'lines+markers', yaxis: 'y2', line: { color: '#0072ce', width: 2 } };
-        const layout = {
-          title: { text: 'Water Area (km²) vs. CHIRPS Rainfall (mm)', font: { color: '#002244', size: 14 } },
-          yaxis: { title: 'Precipitation (mm)', titlefont: { color: '#dc2626' } },
-          yaxis2: { title: 'Water Area (km²)', titlefont: { color: '#0072ce' }, overlaying: 'y', side: 'right' },
-          margin: { t: 40, b: 40, l: 40, r: 40 },
-          legend: { orientation: 'h', y: 1.1 }
-        };
-        Plotly.newPlot('plotly-chart-container', [trace1, trace2], layout, {responsive: true});
+      const tabsWrapper = document.getElementById('chart-tabs-wrapper');
 
-        const peakW = Math.max(...data.map(d=>d.waterArea)).toFixed(1);
-        const avgW = (data.reduce((a,b)=>a+b.waterArea,0)/data.length).toFixed(1);
-        const totR = data.reduce((a,b)=>a+b.precip,0).toFixed(1);
-        document.getElementById('chart-explanation-box').innerHTML = `<h4 class="font-bold text-[#002244]">Graph Explanation:</h4><p>Peak water area reached <b>${peakW} km²</b> (average: <b>${avgW} km²</b>), with accumulated rainfall of <b>${totR} mm</b>.</p>`;
-      } else if (activeChartTab === 'tab2') {
-        const trace1 = { x: xVals, y: data.map(d=>d.waterArea), name: 'Water Surface Area (km²)', type: 'scatter', fill: 'tozeroy', fillcolor: 'rgba(0,114,206,0.7)', line: { color: '#0072ce' } };
-        const trace2 = { x: xVals, y: data.map(d=>d.nonWaterArea), name: 'Non-Water Land Area (km²)', type: 'scatter', fill: 'tonexty', fillcolor: 'rgba(244,114,182,0.5)', line: { color: '#f472b6' } };
-        const layout = {
-          title: { text: 'Basin Surface Composition (1,326.48 km² Total)', font: { color: '#002244', size: 14 } },
-          yaxis: { title: 'Area (km²)' },
-          margin: { t: 40, b: 40, l: 40, r: 40 },
-          legend: { orientation: 'h', y: 1.1 }
+      // SPECIFIC MONTH & YEAR: CIRCULAR CHART (DONUT/PIE)
+      if (tsFilterMode === 'month_year') {
+        tabsWrapper.classList.add('hidden');
+        const sRow = data[0];
+        const trace = {
+          labels: ['Water Surface Area (km²)', 'Non-Water Land Area (km²)'],
+          values: [sRow.waterArea, sRow.nonWaterArea],
+          type: 'pie',
+          hole: 0.45,
+          marker: { colors: ['#0072ce', '#f472b6'] },
+          textinfo: 'label+value+percent',
+          hoverinfo: 'label+value+percent'
         };
-        Plotly.newPlot('plotly-chart-container', [trace1, trace2], layout, {responsive: true});
+        const layout = {
+          title: { text: `<b>${sRow.monthName} ${sRow.year}: Basin Surface Composition (${TOTAL_BASIN_KM2.toFixed(2)} km²)</b>`, font: { color: '#002244', size: 14 } },
+          margin: { t: 50, b: 30, l: 30, r: 30 },
+          legend: { orientation: 'h', y: -0.1 }
+        };
+        Plotly.newPlot('plotly-chart-container', [trace], layout, {responsive: true});
 
-        const avgW = (data.reduce((a,b)=>a+b.waterArea,0)/data.length).toFixed(1);
-        const pct = ((avgW/TOTAL_BASIN_KM2)*100).toFixed(1);
-        document.getElementById('chart-explanation-box').innerHTML = `<h4 class="font-bold text-[#002244]">Graph Explanation:</h4><p>Water surface covers an average of <b>${avgW} km² (${pct}% of basin)</b>.</p>`;
+        const wPct = ((sRow.waterArea / TOTAL_BASIN_KM2) * 100).toFixed(1);
+        document.getElementById('chart-explanation-box').innerHTML = `
+          <h4 class="font-bold text-[#002244] text-xs uppercase">SINGLE MONTH BASIN BREAKDOWN (${sRow.monthName} ${sRow.year}):</h4>
+          <p>Water surface area covered <b>${sRow.waterArea.toFixed(2)} km² (${wPct}% of total basin)</b> with <b>${sRow.precip.toFixed(2)} mm</b> of satellite precipitation.</p>
+        `;
       } else {
-        const trace1 = { x: xVals, y: data.map(d=>d.precip), name: 'Monthly Rainfall (mm)', type: 'bar', marker: { color: '#dc2626' } };
-        const layout = {
-          title: { text: 'CHIRPS Monthly Rainfall Breakdown (mm)', font: { color: '#002244', size: 14 } },
-          yaxis: { title: 'Precipitation (mm)' },
-          margin: { t: 40, b: 40, l: 40, r: 40 }
-        };
-        Plotly.newPlot('plotly-chart-container', [trace1], layout, {responsive: true});
+        tabsWrapper.classList.remove('hidden');
+        const xVals = data.map(d => tsFilterMode === 'multi_month' ? d.year.toString() : (tsFilterMode === 'year' ? d.monthName : d.monthYear));
+        
+        if (activeChartTab === 'tab1') {
+          const trace1 = { x: xVals, y: data.map(d=>d.precip), name: 'CHIRPS Rainfall (mm)', type: 'bar', marker: { color: '#dc2626' } };
+          const trace2 = { x: xVals, y: data.map(d=>d.waterArea), name: 'Water Surface Area (km²)', type: 'scatter', mode: 'lines+markers', yaxis: 'y2', line: { color: '#0072ce', width: 2 } };
+          const layout = {
+            title: { text: 'Water Area (km²) vs. CHIRPS Rainfall (mm)', font: { color: '#002244', size: 14 } },
+            yaxis: { title: 'Precipitation (mm)', titlefont: { color: '#dc2626' } },
+            yaxis2: { title: 'Water Area (km²)', titlefont: { color: '#0072ce' }, overlaying: 'y', side: 'right' },
+            margin: { t: 40, b: 40, l: 40, r: 40 },
+            legend: { orientation: 'h', y: 1.1 }
+          };
+          Plotly.newPlot('plotly-chart-container', [trace1, trace2], layout, {responsive: true});
 
-        const totR = data.reduce((a,b)=>a+b.precip,0).toFixed(1);
-        const maxR = Math.max(...data.map(d=>d.precip)).toFixed(1);
-        document.getElementById('chart-explanation-box').innerHTML = `<h4 class="font-bold text-[#002244]">Graph Explanation:</h4><p>Total rainfall recorded: <b>${totR} mm</b> (peak monthly: <b>${maxR} mm</b>).</p>`;
+          const peakW = Math.max(...data.map(d=>d.waterArea)).toFixed(1);
+          const avgW = (data.reduce((a,b)=>a+b.waterArea,0)/data.length).toFixed(1);
+          const totR = data.reduce((a,b)=>a+b.precip,0).toFixed(1);
+          document.getElementById('chart-explanation-box').innerHTML = `<h4 class="font-bold text-[#002244]">Graph Explanation:</h4><p>Peak water area reached <b>${peakW} km²</b> (average: <b>${avgW} km²</b>), with accumulated rainfall of <b>${totR} mm</b>.</p>`;
+        } else if (activeChartTab === 'tab2') {
+          const trace1 = { x: xVals, y: data.map(d=>d.waterArea), name: 'Water Surface Area (km²)', type: 'scatter', fill: 'tozeroy', fillcolor: 'rgba(0,114,206,0.7)', line: { color: '#0072ce' } };
+          const trace2 = { x: xVals, y: data.map(d=>d.nonWaterArea), name: 'Non-Water Land Area (km²)', type: 'scatter', fill: 'tonexty', fillcolor: 'rgba(244,114,182,0.5)', line: { color: '#f472b6' } };
+          const layout = {
+            title: { text: 'Basin Surface Composition (1,326.48 km² Total)', font: { color: '#002244', size: 14 } },
+            yaxis: { title: 'Area (km²)' },
+            margin: { t: 40, b: 40, l: 40, r: 40 },
+            legend: { orientation: 'h', y: 1.1 }
+          };
+          Plotly.newPlot('plotly-chart-container', [trace1, trace2], layout, {responsive: true});
+
+          const avgW = (data.reduce((a,b)=>a+b.waterArea,0)/data.length).toFixed(1);
+          const pct = ((avgW/TOTAL_BASIN_KM2)*100).toFixed(1);
+          document.getElementById('chart-explanation-box').innerHTML = `<h4 class="font-bold text-[#002244]">Graph Explanation:</h4><p>Water surface covers an average of <b>${avgW} km² (${pct}% of basin)</b>.</p>`;
+        } else {
+          const trace1 = { x: xVals, y: data.map(d=>d.precip), name: 'Monthly Rainfall (mm)', type: 'bar', marker: { color: '#dc2626' } };
+          const layout = {
+            title: { text: 'CHIRPS Monthly Rainfall Breakdown (mm)', font: { color: '#002244', size: 14 } },
+            yaxis: { title: 'Precipitation (mm)' },
+            margin: { t: 40, b: 40, l: 40, r: 40 }
+          };
+          Plotly.newPlot('plotly-chart-container', [trace1], layout, {responsive: true});
+
+          const totR = data.reduce((a,b)=>a+b.precip,0).toFixed(1);
+          const maxR = Math.max(...data.map(d=>d.precip)).toFixed(1);
+          document.getElementById('chart-explanation-box').innerHTML = `<h4 class="font-bold text-[#002244]">Graph Explanation:</h4><p>Total rainfall recorded: <b>${totR} mm</b> (peak monthly: <b>${maxR} mm</b>).</p>`;
+        }
       }
 
       // Populate Primary Table
@@ -611,8 +641,8 @@
       } else {
         const years = [...new Set(globalData.map(d=>d.year))].sort((a,b)=>b-a);
         container.innerHTML = `
-          <div><label class="font-bold text-xs text-[#002244] block mb-1">Year 1:</label><select id="comp-y1" onchange="renderCompAnalysis()" class="w-full p-2 border rounded font-semibold">${years.map(y=>`<option value="${y}" ${y===2022?'selected':''}>${y}</option>`).join('')}</select></div>
-          <div><label class="font-bold text-xs text-[#002244] block mb-1">Year 2:</label><select id="comp-y2" onchange="renderCompAnalysis()" class="w-full p-2 border rounded font-semibold">${years.map(y=>`<option value="${y}" ${y===2021?'selected':''}>${y}</option>`).join('')}</select></div>
+          <div><label class="font-bold text-xs text-[#002244] block mb-1">Select Year 1:</label><select id="comp-y1" onchange="renderCompAnalysis()" class="w-full p-2 border rounded font-semibold">${years.map(y=>`<option value="${y}" ${y===2022?'selected':''}>${y}</option>`).join('')}</select></div>
+          <div><label class="font-bold text-xs text-[#002244] block mb-1">Select Year 2:</label><select id="comp-y2" onchange="renderCompAnalysis()" class="w-full p-2 border rounded font-semibold">${years.map(y=>`<option value="${y}" ${y===2021?'selected':''}>${y}</option>`).join('')}</select></div>
         `;
       }
     }
@@ -637,7 +667,7 @@
 
         const trace1 = { x: ['Water Area (km²)', 'Rainfall (mm)', 'Non-Water Area (km²)'], y: [r1.waterArea, r1.precip, r1.nonWaterArea], name: p1Name, type: 'bar', marker: { color: '#0072ce' } };
         const trace2 = { x: ['Water Area (km²)', 'Rainfall (mm)', 'Non-Water Area (km²)'], y: [r2.waterArea, r2.precip, r2.nonWaterArea], name: p2Name, type: 'bar', marker: { color: '#93c5fd' } };
-        Plotly.newPlot('comp-plotly-chart', [trace1, trace2], { barmode: 'group', title: { text: `Comparison: ${p1Name} vs ${p2Name}` } }, {responsive: true});
+        Plotly.newPlot('comp-plotly-chart', [trace1, trace2], { barmode: 'group', title: { text: `Grouped Bar Comparison: ${p1Name} vs ${p2Name}` } }, {responsive: true});
 
         document.getElementById('comp-table').innerHTML = `
           <thead class="bg-[#002244] text-white"><tr><th class="p-2">Variable</th><th class="p-2">${p1Name}</th><th class="p-2">${p2Name}</th><th class="p-2">Delta</th></tr></thead>
@@ -646,6 +676,51 @@
             <tr class="border-b"><td class="p-2 font-bold">CHIRPS Rainfall (mm)</td><td class="p-2">${r1.precip.toFixed(2)}</td><td class="p-2">${r2.precip.toFixed(2)}</td><td class="p-2 font-bold text-red-600">${pDiff.toFixed(2)}</td></tr>
           </tbody>
         `;
+      } else {
+        // TWO FULL YEARS COMPARISON
+        const y1 = parseInt(document.getElementById('comp-y1')?.value || 2022);
+        const y2 = parseInt(document.getElementById('comp-y2')?.value || 2021);
+
+        const dfY1 = globalData.filter(d => d.year === y1).sort((a,b)=>a.monthNum-b.monthNum);
+        const dfY2 = globalData.filter(d => d.year === y2).sort((a,b)=>a.monthNum-b.monthNum);
+        const monthsList = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        const avgW1 = dfY1.length ? (dfY1.reduce((a,b)=>a+b.waterArea,0)/dfY1.length) : 0;
+        const avgW2 = dfY2.length ? (dfY2.reduce((a,b)=>a+b.waterArea,0)/dfY2.length) : 0;
+        const totR1 = dfY1.reduce((a,b)=>a+b.precip,0);
+        const totR2 = dfY2.reduce((a,b)=>a+b.precip,0);
+
+        const wDiff = avgW1 - avgW2;
+        const rDiff = totR1 - totR2;
+        const maxW1 = dfY1.length ? Math.max(...dfY1.map(d=>d.waterArea)) : 0;
+        const maxW2 = dfY2.length ? Math.max(...dfY2.map(d=>d.waterArea)) : 0;
+
+        document.getElementById('comp-metrics-container').innerHTML = `
+          <div class="bg-white border-t-4 border-t-[#0072ce] border border-slate-300 p-3 text-center rounded"><div class="text-[10px] font-bold text-slate-500">AVG WATER AREA DELTA</div><div class="text-lg font-bold text-[#002244]">${wDiff > 0 ? '+':''}${wDiff.toFixed(1)} km²</div><div class="text-[10px] font-bold text-[#0072ce]">${y1} vs ${y2}</div></div>
+          <div class="bg-white border-t-4 border-t-red-600 border border-slate-300 p-3 text-center rounded"><div class="text-[10px] font-bold text-slate-500">TOTAL RAINFALL DELTA</div><div class="text-lg font-bold text-[#002244]">${rDiff > 0 ? '+':''}${rDiff.toFixed(1)} mm</div><div class="text-[10px] font-bold text-red-600">${y1} vs ${y2}</div></div>
+          <div class="bg-white border-t-4 border-t-slate-600 border border-slate-300 p-3 text-center rounded"><div class="text-[10px] font-bold text-slate-500">MONSOON PEAK WATER DELTA</div><div class="text-lg font-bold text-[#002244]">${(maxW1 - maxW2).toFixed(1)} km²</div></div>
+        `;
+
+        const trace1 = { x: dfY1.map(d=>d.monthName), y: dfY1.map(d=>d.waterArea), name: `${y1} Water Area (km²)`, type: 'bar', marker: { color: '#0072ce' } };
+        const trace2 = { x: dfY2.map(d=>d.monthName), y: dfY2.map(d=>d.waterArea), name: `${y2} Water Area (km²)`, type: 'bar', marker: { color: '#93c5fd' } };
+        const trace3 = { x: dfY1.map(d=>d.monthName), y: dfY1.map(d=>d.precip), name: `${y1} Rainfall (mm)`, type: 'bar', marker: { color: '#dc2626' } };
+        const trace4 = { x: dfY2.map(d=>d.monthName), y: dfY2.map(d=>d.precip), name: `${y2} Rainfall (mm)`, type: 'bar', marker: { color: '#fca5a5' } };
+
+        Plotly.newPlot('comp-plotly-chart', [trace1, trace2, trace3, trace4], { barmode: 'group', title: { text: `Annual Comparison: Year ${y1} vs Year ${y2}` } }, {responsive: true});
+
+        let html = `<thead class="bg-[#002244] text-white"><tr><th class="p-2">Month</th><th class="p-2">Water Area ${y1} (km²)</th><th class="p-2">Water Area ${y2} (km²)</th><th class="p-2">Water Delta (km²)</th><th class="p-2">Rain ${y1} (mm)</th><th class="p-2">Rain ${y2} (mm)</th><th class="p-2">Rain Delta (mm)</th></tr></thead><tbody>`;
+        monthsList.forEach(m => {
+          const m1 = dfY1.find(d=>d.monthName===m);
+          const m2 = dfY2.find(d=>d.monthName===m);
+          if (m1 || m2) {
+            const w1 = m1 ? m1.waterArea : 0;
+            const w2 = m2 ? m2.waterArea : 0;
+            const r1 = m1 ? m1.precip : 0;
+            const r2 = m2 ? m2.precip : 0;
+            html += `<tr class="border-b hover:bg-slate-50"><td class="p-2 font-bold">${m}</td><td class="p-2">${w1.toFixed(2)}</td><td class="p-2">${w2.toFixed(2)}</td><td class="p-2 font-bold text-[#0072ce]">${(w1-w2).toFixed(2)}</td><td class="p-2">${r1.toFixed(2)}</td><td class="p-2">${r2.toFixed(2)}</td><td class="p-2 font-bold text-red-600">${(r1-r2).toFixed(2)}</td></tr>`;
+          }
+        });
+        document.getElementById('comp-table').innerHTML = html + '</tbody>';
       }
     }
 
